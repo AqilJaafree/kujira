@@ -1,0 +1,19 @@
+[features]
+seeds = true
+skip-lint = false
+
+[programs.localnet]
+collateral_manager = "6bcDZNzrSKJE5eA4HBRryqweVy3Dq4YeXfpqwG9VEe3f"
+lending_vault      = "4gFZQRU4Qz69AsEBwoHacd5wA88andm1eMSkNzK3MsAJ"
+trading_engine     = "FVpeDwQgf7GSz8CQachQXzZZJrKE9sJ2FWbuoHLuQkDs"
+settlement         = "5Ymdq7VQKyhnerpYBaoc3pgV3CYdXHhGbBWQTVwf463k"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet  = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 'tests/*.ts'"
