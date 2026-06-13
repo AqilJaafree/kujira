@@ -1,28 +1,27 @@
 [package]
-name = "collateral-manager"
+name    = "collateral-manager"
 version = "0.1.0"
-description = "Created with Anchor"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "collateral_manager"
+name       = "collateral_manager"
 
 [features]
-default = []
-cpi = ["no-entrypoint"]
-no-entrypoint = []
-no-idl = []
+no-entrypoint  = []
 no-log-ix-name = []
-idl-build = ["anchor-lang/idl-build"]
-anchor-debug = []
-custom-heap = []
-custom-panic = []
+cpi            = ["no-entrypoint"]
+default        = []
+idl-build      = ["anchor-lang/idl-build"]
 
+# anchor-spl = { version = "0.32.1", features = ["token"] }
+# TODO(task-3): add anchor-spl once Solana platform-tools >= v1.50 (Cargo >= 1.85)
+# is available; current platform-tools v1.48 uses Cargo 1.84.0 which cannot parse
+# anchor-spl 0.32.1's transitive deps (digest 0.11.x -> ctutils 0.4.x) that
+# require edition = "2024".
 
 [dependencies]
-anchor-lang = "0.32.1"
-
+anchor-lang = { version = "0.32.1", features = ["init-if-needed"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
