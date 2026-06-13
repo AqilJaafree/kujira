@@ -9,3 +9,5 @@ build/
 # Claude Code internals — not part of the project
 .claude/
 .claude-plugin/
+app/dist/
+migrations/*.js

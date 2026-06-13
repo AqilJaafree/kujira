@@ -2,7 +2,7 @@ import * as anchor from "@coral-xyz/anchor";
 import {
   createMint, getAccount,
   TOKEN_PROGRAM_ID,
-  getAssociatedTokenAddress, createAssociatedTokenAccount,
+  createAssociatedTokenAccount,
   mintTo,
 } from "@solana/spl-token";
 import { Keypair, PublicKey, Connection } from "@solana/web3.js";
