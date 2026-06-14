@@ -14,4 +14,6 @@ pub enum TradingError {
     InvalidKeeperSignature,
     #[msg("Leverage must be between 1 and 10")]
     InvalidLeverage,
+    #[msg("Session is not in Settling state")]
+    SessionNotSettling,
 }

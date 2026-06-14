@@ -4,7 +4,10 @@ use lending_vault::{
     cpi::{self as lv_cpi, accounts::RepayLoan},
     state::{LendingVault, LoanAccount, LoanStatus},
 };
-use trading_engine::state::{SessionStatus, TradeSession};
+use trading_engine::{
+    cpi::{self as te_cpi, accounts::MarkSettled},
+    state::{SessionStatus, TradeSession},
+};
 use crate::error::SettlementError;
 use crate::state::SettlementRecord;
 
@@ -51,6 +54,7 @@ pub struct Settle<'info> {
     pub repayment_source: Account<'info, TokenAccount>,
 
     pub lending_vault_program: Program<'info, lending_vault::program::LendingVault>,
+    pub trading_engine_program: Program<'info, trading_engine::program::TradingEngine>,
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
 }
@@ -64,7 +68,7 @@ pub fn handler(ctx: Context<Settle>, realized_pnl: i64) -> Result<()> {
 
     require!(repay_amount > 0, SettlementError::ZeroRepayment);
 
-    // CPI to lending-vault::repay_loan — it transfers from repayment_source and marks Repaid
+    // CPI to lending-vault::repay_loan — transfers from repayment_source and marks Repaid
     lv_cpi::repay_loan(
         CpiContext::new(
             ctx.accounts.lending_vault_program.to_account_info(),
@@ -80,7 +84,16 @@ pub fn handler(ctx: Context<Settle>, realized_pnl: i64) -> Result<()> {
         repay_amount,
     )?;
 
-    ctx.accounts.trade_session.status = SessionStatus::Settled;
+    // CPI to trading-engine::mark_settled — only trading_engine can write its own accounts
+    te_cpi::mark_settled(
+        CpiContext::new(
+            ctx.accounts.trading_engine_program.to_account_info(),
+            MarkSettled {
+                caller:        ctx.accounts.settler.to_account_info(),
+                trade_session: ctx.accounts.trade_session.to_account_info(),
+            },
+        ),
+    )?;
 
     let sr = &mut ctx.accounts.settlement_record;
     sr.trade_session  = ctx.accounts.trade_session.key();
